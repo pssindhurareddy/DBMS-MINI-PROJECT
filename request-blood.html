@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Blood</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Request Blood</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="login.html">Logout</a>
+        </nav>
+    </header>
+    <div class="container">
+        <form action="/api/request-blood" method="POST">
+            <label for="bloodType">Blood Type:</label>
+            <select id="bloodType" name="bloodType" required>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+            </select>
+
+            <label for="quantity">Quantity (in units):</label>
+            <input type="number" id="quantity" name="quantity" required>
+
+            <label for="hospital">Select Hospital:</label>
+            <select id="hospital" name="hospital" required>
+                <!-- Options loaded by JS -->
+            </select>
+
+            <label for="notes">Additional Notes:</label>
+            <textarea id="notes" name="notes"></textarea>
+
+            <button type="submit">Submit Request</button>
+        </form>
+    </div>
+    <footer>
+        <p>&copy; 2025 Blood Donation System. All rights reserved.</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>

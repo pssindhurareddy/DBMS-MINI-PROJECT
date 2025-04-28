@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Blood Request</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>My Blood Request</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2>Request Details</h2>
+    <div id="requestDetails">
+      <!-- Request info will be filled here by JavaScript -->
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Blood Donation System. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const requestId = localStorage.getItem('requestId');
+
+    if (!requestId) {
+      document.getElementById('requestDetails').innerHTML = "<p>No request found. Please make a blood request first.</p>";
+    } else {
+      fetch(`http://localhost:3000/api/request/${requestId}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data) {
+          document.getElementById('requestDetails').innerHTML = `
+            <p><strong>Name:</strong> ${data.Name}</p>
+            <p><strong>Age:</strong> ${data.Age}</p>
+            <p><strong>Gender:</strong> ${data.Gender}</p>
+            <p><strong>Blood Type:</strong> ${data.BloodType}</p>
+            <p><strong>City:</strong> ${data.City}</p>
+            <p><strong>Contact Info:</strong> ${data.ContactInfo}</p>
+            <p><strong>Status:</strong> <b>${data.RequestStatus}</b></p>
+          `;
+        } else {
+          document.getElementById('requestDetails').innerHTML = "<p>Request not found.</p>";
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('requestDetails').innerHTML = "<p>Error loading request details.</p>";
+      });
+    }
+  </script>
+</body>
+</html>

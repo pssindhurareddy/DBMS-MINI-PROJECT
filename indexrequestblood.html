@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Blood</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#e53e3e',
+                        secondary: '#f6ad55'
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif; /* Or 'Montserrat', whichever you prefer */
+            background-color: #f3f4f6; /* Light gray background */
+            margin: 0;
+            padding-top: 60px; /* Add padding to avoid content underlapping the fixed header */
+        }
+
+        .sticky-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 50;
+            background-color: white; /* Solid white background for stickiness */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow for better separation */
+        }
+
+        .logo-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: #e53e3e;
+        }
+
+        .logo-text span {
+            color: #374151; /* Dark gray */
+        }
+
+        nav a {
+            color: #374151; /* Dark gray */
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #e53e3e;
+        }
+
+        .request-blood {
+            padding: 2rem;
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+            margin: 2rem auto;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .request-blood h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #e53e3e;
+            margin-bottom: 1rem;
+        }
+
+        .request-blood p {
+            color: #4b5563;
+            margin-bottom: 1.5rem;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+            width: 100%;
+            max-width: 200px;
+            text-align: center;
+            background-color: #e53e3e; /* All buttons red */
+            color: white;
+        }
+
+        .btn:hover {
+            background-color: #c82d2d; /* Darker red on hover */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="sticky-nav">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="index.html" class="logo-text">BLOOD BANK <span>MANAGEMENT</span></a>
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="text-gray-800 font-medium">Home</a>
+                <a href="donate.html" class="text-gray-800 font-medium">Donate Blood</a>
+                <a href="request.html" class="text-gray-800 font-medium">Request Blood</a>
+                <a href="#hospitals" class="text-gray-800 font-medium">Hospital Services</a>
+            </nav>
+            <div class="flex items-center space-x-4">
+                <a href="login.html" class="text-primary font-medium">Login</a>
+                <a href="signup.html" class="bg-primary text-white px-4 py-2 rounded-button font-medium hover:bg-opacity-90 transition-all whitespace-nowrap">Sign Up</a>
+                <button class="md:hidden w-10 h-10 flex items-center justify-center text-gray-800">
+                    <i class="ri-menu-line ri-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section class="request-blood">
+        <h2>Request Blood</h2>
+        <p>If you need blood urgently, choose the option below:</p>
+
+        <div class="button-container">
+            <a href="signup.html" class="btn">Request Blood</a>
+           
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Blood Bank Management. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>

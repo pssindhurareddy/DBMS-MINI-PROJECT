@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Blood Requests</title>
+    <style>
+        body { 
+            font-family: sans-serif; 
+            margin: 20px; 
+            color: #d9534f;
+        }
+       
+        h1{
+            text-align: center;
+        }
+
+        .request-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        
+        .request-list li {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+        }
+        
+        .request-list li strong {
+            color: #d9534f;
+        }
+        
+        .request-list li span {
+            margin-left: 10px;
+            color: #555;
+        }
+
+        .view-details-button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 15px;
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            width: 150px;
+        }
+
+        .view-details-button:hover {
+            background-color: #c9302c;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Your Blood Requests</h1>
+    <ul id="request_list" class="request-list">
+    </ul>
+    <a href="hospital_view_requests.html" class="view-details-button">Back to Dashboard</a>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const hospitalId = localStorage.getItem('hospitalId');
+            if (!hospitalId) {
+                window.location.href = './INDEX.html';
+                return;
+            }
+
+            fetch(`/api/hospital/${hospitalId}/requests`)
+                .then(response => response.json())
+                .then(data => {
+                    const requestList = document.getElementById('request_list');
+                    requestList.innerHTML = '';
+
+                    if (data && data.length > 0) {
+                        data.forEach(request => {
+                            const listItem = document.createElement('li');
+                            listItem.innerHTML = `
+                                <strong>Request ID:</strong> ${request.RequestID}<br>
+                                <strong>Blood Type:</strong> ${request.BloodType}<br>
+                                <strong>Quantity:</strong> ${request.Quantity}<br>
+                                <strong>Request Date:</strong> ${request.RequestDate}<br>
+                                <strong>Status:</strong> ${request.Status}<br>
+                                <strong>Recipient Name:</strong> ${request.RecipientName}<br>
+                                <strong>Recipient City:</strong> ${request.RecipientCity}
+                            `;
+                            requestList.appendChild(listItem);
+                        });
+                    } else {
+                        requestList.innerHTML = '<li style="text-align: center;">No blood requests found in your city.</li>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching blood requests:', error);
+                    alert('Failed to fetch blood requests. Please try again.');
+                });
+        });
+    </script>
+</body>
+</html>

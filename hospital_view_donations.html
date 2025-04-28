@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Donations</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        a { text-decoration: none; color: #337ab7; }
+    </style>
+</head>
+<body>
+    <h1>Donation History</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Donation ID</th>
+                <th>Donor Name</th>
+                <th>Blood Type</th>
+                <th>Donation Date</th>
+                <th>Quantity</th>
+                </tr>
+        </thead>
+        <tbody id="donation_table_body">
+            <tr>
+                <td>101</td>
+                <td>John Doe</td>
+                <td>A+</td>
+                <td>2025-04-20</td>
+                <td>1 unit</td>
+            </tr>
+            <tr>
+                <td>102</td>
+                <td>Jane Smith</td>
+                <td>O-</td>
+                <td>2025-04-15</td>
+                <td>1 unit</td>
+            </tr>
+            </tbody>
+    </table>
+    <p><a href="hospital_dashboard.html">Back to Dashboard</a></p>
+
+    <script>
+        // public/js/view_donations.js
+
+document.addEventListener('DOMContentLoaded', function() {
+    const donationTableBody = document.getElementById('donation_table_body');
+    const hospitalId = localStorage.getItem('hospitalId');
+
+    if (!hospitalId) {
+        window.location.href = './index.html'; // Redirect if not logged in
+        return;
+    }
+
+    fetch(`/api/hospitals/${hospitalId}/donations`)
+        .then(response => response.json())
+        .then(data => {
+            donationTableBody.innerHTML = '';
+            if (data && data.length > 0) {
+                data.forEach(donation => {
+                    const row = donationTableBody.insertRow();
+                    row.insertCell().textContent = donation.DonationID;
+                    row.insertCell().textContent = donation.DonorName;
+                    // You might want to fetch blood type associated with the donation
+                    // This would require modifying the backend query.
+                    row.insertCell().textContent = 'N/A'; 
+                    row.insertCell().textContent = new Date(donation.DonationDate).toLocaleDateString();
+                    row.insertCell().textContent = donation.Quantity;
+                });
+            } else {
+                const row = donationTableBody.insertRow();
+                const cell = row.insertCell();
+                cell.colSpan = 5;
+                cell.textContent = 'No donation history found.';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching donations:', error);
+            alert('Failed to fetch donation history.');
+        });
+});
+    </script>
+</body>
+</html>

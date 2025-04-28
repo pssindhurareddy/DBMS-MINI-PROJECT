@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Dashboard</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#e53e3e',
+                        secondary: '#f6ad55'
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+            margin-top: 66px;
+            flex-direction: row;
+        }
+
+        .sidebar {
+            background-color: #b80c09;
+            color: #fff;
+            width: 250px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .sidebar h3 {
+            color: #fff;
+            margin-bottom: 20px;
+            text-align: left;
+            width: 100%;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #d32d28;
+        }
+
+        .hospital-services {
+            width: 100%;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        .hospital-services ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+        }
+
+        .hospital-services li {
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .hospital-services a {
+            display: block;
+            padding: 12px 15px;
+            text-decoration: none;
+            color: #eee;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            text-align: left;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .hospital-services a:hover {
+            background-color: #920b07;
+        }
+
+        .hospital-services a.active {
+            background-color: #920b07;
+        }
+
+        .logout-link {
+            margin-top: 20px;
+            background-color: #c0392b;
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logout-link:hover {
+            background-color: #e74c3c;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .dashboard-header {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .dashboard-header h1 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        .hospital-info {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .overview-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .card i {
+            font-size: 2em;
+            color: #e53e3e;
+            margin-bottom: 10px;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .card p {
+            color: #777;
+        }
+
+        .card a {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 15px;
+            text-decoration: none;
+            background-color: #e53e3e;
+            color: #fff;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .card a:hover {
+            background-color: #c53030;
+        }
+
+        .announcements {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .announcements h2 {
+            color: #2c3e50;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .announcement-item {
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .announcement-item:last-child {
+            border-bottom: none;
+        }
+
+        .announcement-item p {
+            margin-bottom: 5px;
+        }
+
+        .announcement-item .date {
+            color: #777;
+            font-size: 0.9em;
+        }
+
+        /* Animations */
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .slide-in-left {
+            animation: slideInLeft 0.5s ease-out;
+        }
+
+        /* Styles from the provided HTML */
+        body {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .hero-section {
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.95) 40%, rgba(255, 255, 255, 0.8) 60%, rgba(255, 255, 255, 0.6) 80%, rgba(255, 255, 255, 0.2) 100%), url('https://readdy.ai/api/search-image?query=Abstract%20modern%20medical%20background%20with%20DNA%20structure%2C%20blood%20cells%2C%20and%20flowing%20red%20particles.%20Clean%2C%20minimalist%20design%20design%20with%20subtle%20medical%20symbols.%20Professional%20healthcare%20visualization%20with%20dynamic%20elements.%20High-tech%20medical%20concept%20with%20elegant%20red%20and%20white%20color%20scheme.%20Soft%20focus%20background%20with%20depth%20of%20field.&width=1920&height=1080&seq=2&orientation=landscape');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #e53e3e;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .counter-value {
+            transition: all 0.5s ease;
+        }
+
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #e53e3e;
+            box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.2);
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .blood-group-option {
+            transition: all 0.3s ease;
+        }
+
+        .blood-group-option.selected {
+            background-color: rgba(229, 62, 62, 0.1);
+            border-color: #e53e3e;
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .sticky-nav {
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .custom-checkbox {
+            position: relative;
+            padding-left: 30px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .custom-checkbox input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 20px;
+            width: 20px;
+            background-color: #fff;
+            border: 2px solid #e2e8f0;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .custom-checkbox:hover input ~ .checkmark {
+            border-color: #e53e3e;
+        }
+
+        .custom-checkbox input:checked ~ .checkmark {
+            background-color: #e53e3e;
+            border-color: #e53e3e;
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        .custom-checkbox input:checked ~ .checkmark:after {
+            display: block;
+        }
+
+        .custom-checkbox .checkmark:after {
+            left: 6px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .custom-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .custom-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .switch-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #e2e8f0;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .switch-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .switch-slider {
+            background-color: #e53e3e;
+        }
+
+        input:checked + .switch-slider:before {
+            transform: translateX(26px);
+        }
+
+        .progress-bar {
+            height: 4px;
+            background-color: #e2e8f0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: #e53e3e;
+            transition: width 0.5s ease;
+        }
+
+        @media (min-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .hospital-info {
+                width: 100%;
+            }
+
+            .overview-cards {
+                width: 100%;
+            }
+        }
+    </style>
+    <base href="/">
+</head>
+<body class="bg-gray-50">
+    <header class="sticky-nav fixed top-0 w-full z-50 bg-transparent transition-all duration-300">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-['Poppins'] font-bold tracking-wider text-primary">BLOOD BANK <span class="text-gray-800">MANAGEMENT</span></a>
+            <nav class="hidden md:flex items-center">
+                <a href="./INDEX.html" class="nav-link text-gray-800 font-medium">Home</a>
+                <a href="./hospital_services_index_page.html" class="nav-link text-gray-800 font-medium">Hospital Services</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <nav class="hospital-services">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="./hospital_request_blood.html" class="service-link" data-animation="slide-in-left">Request Blood</a></li>
+                    <li><a href="./hospital_view_requests.html" class="service-link" data-animation="slide-in-left">View Requests</a></li>
+                    <li><a href="./hospital_view_donations.html" class="service-link" data-animation="slide-in-left">View Donations</a></li>
+                    <li><a href="./hospital_manage_blood_stock.html" class="service-link" data-animation="slide-in-left">Manage Blood Stock</a></li>
+                    <li><a href="./hospital_view_blood_banks.html" class="service-link" data-animation="slide-in-left">View Blood Banks</a></li>
+                    <li><a href="#" class="logout-link">Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <section class="hospital-info">
+                <h2>Hospital Information</h2>
+                <p>Hospital ID: <span id="hospital-id">Loading...</span></p>
+                <p>Name: <span id="hospital-name">Loading...</span></p>
+                <p>City: <span id="hospital-city">Loading...</span></p>
+                <p>Contact: <span id="hospital-contact">Loading...</span></p>
+            </section>
+            <section class="overview-cards">
+                <div class="card">
+                    <i class="fas fa-tint"></i>
+                    <h3>Recent Requests</h3>
+                    <p><span id="recent-requests-count">Loading...</span></p>
+                    <ul id="recent-requests-list" class="mt-4 space-y-2">
+                    </ul>
+                    <a href="./hospital_view_requests.html">View Details</a>
+                </div>
+                <div class="card">
+                    <i class="fas fa-hand-holding-heart"></i>
+                    <h3>Recent Donations</h3>
+                    <p><span id="recent-donations-count">Loading...</span></p>
+                    <ul id="recent-donations-list" class="mt-4 space-y-2">
+                    </ul>
+                    <a href="./hospital_view_donations.html">View Details</a>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const serviceLinks = document.querySelectorAll('.service-link');
+
+            serviceLinks.forEach(link => {
+                link.addEventListener('mouseover', function() {
+                    this.classList.add('animated');
+                });
+
+                link.addEventListener('mouseout', function() {
+                    this.classList.remove('animated');
+                });
+            });
+
+            const logoutLink = document.querySelector('.logout-link');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    localStorage.removeItem('hospitalInfo');
+                    window.location.href = './INDEX.html';
+                });
+            }
+
+            // --- Get Hospital ID from localStorage ---
+            const storedHospitalInfo = localStorage.getItem('hospitalInfo');
+            let hospitalId;
+
+            if (storedHospitalInfo) {
+                const hospitalInfo = JSON.parse(storedHospitalInfo);
+                hospitalId = hospitalInfo.HospitalID;
+
+                // Function to update hospital info.  Handles cases where the login was not from the hospital dashboard
+                const updateHospitalInfo = (data) => {
+                    if (data) {
+                        if(data.hospital){
+                            document.getElementById('hospital-id').textContent = data.hospital.HospitalID;
+                            document.getElementById('hospital-name').textContent = data.hospital.Name;
+                            document.getElementById('hospital-city').textContent = data.hospital.City;
+                            document.getElementById('hospital-contact').textContent = data.hospital.ContactInfo;
+                        }
+                        else{
+                            document.getElementById('hospital-id').textContent = data.HospitalID;
+                            document.getElementById('hospital-name').textContent = data.Name;
+                            document.getElementById('hospital-city').textContent = data.City;
+                            document.getElementById('hospital-contact').textContent = data.ContactInfo;
+                        }
+
+                    } else {
+                        console.error('Error fetching hospital details: Invalid data structure');
+                    }
+                };
+
+                // Check if hospital data is already present in localStorage
+                if(hospitalInfo){
+                    updateHospitalInfo(hospitalInfo);
+                }
+
+                // --- Fetch hospital details from the backend ---
+                fetch(`/api/dashboard/hospital?hospitalId=${hospitalId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        updateHospitalInfo(data); //update hospital info
+                    })
+                    .catch(error => {
+                        console.error('Error fetching hospital details:', error);
+                    });
+
+                // --- Fetch recent requests and donations ---
+                const fetchRecentData = async (hospitalId) => {
+                    try {
+                        const requestsResponse = await fetch(`/api/hospitals/${hospitalId}/requests`);
+                        const requestsData = await requestsResponse.json();
+
+                        const donationsResponse = await fetch(`/api/hospitals/${hospitalId}/donations`);
+                        const donationsData = await donationsResponse.json();
+
+                        // --- Update UI with fetched data ---
+                        updateUI(requestsData, donationsData);
+
+                    } catch (error) {
+                        console.error('Error fetching recent data:', error);
+                        // Handle error (e.g., display a message to the user)
+                    }
+                };
+
+                const updateUI = (requestsData, donationsData) => {
+                    const recentRequestsCountElement = document.getElementById('recent-requests-count');
+                    const recentRequestsListElement = document.getElementById('recent-requests-list');
+                    const recentDonationsCountElement = document.getElementById('recent-donations-count');
+                    const recentDonationsListElement = document.getElementById('recent-donations-list');
+
+                    if (requestsData && requestsData.length > 0) {
+                        recentRequestsCountElement.textContent = `${requestsData.length} recent requests`;
+                        recentRequestsListElement.innerHTML = requestsData.map(request => `
+                            <li class="py-2 border-b border-gray-200">
+                                <strong class="text-gray-800">Blood Type:</strong> ${request.BloodType},
+                                <span class="text-gray-700">Quantity: ${request.Quantity}</span>,
+                                <span class="text-gray-600">Status: ${request.Status}</span>,
+                                <span class="text-sm text-gray-500">Date: ${request.RequestDate}</span>
+                            </li>
+                        `).join('');
+                    } else {
+                        recentRequestsCountElement.textContent = 'No recent requests';
+                        recentRequestsListElement.innerHTML = '<li class="py-2 text-gray-500">No requests found.</li>';
+                    }
+
+                    if (donationsData && donationsData.length > 0) {
+                        recentDonationsCountElement.textContent = `${donationsData.length} recent donations`;
+                        recentDonationsListElement.innerHTML = donationsData.map(donation => `
+                            <li class="py-2 border-b border-gray-200">
+                                <strong class="text-gray-800">Donor:</strong> ${donation.DonorName},
+                                <span class="text-gray-700">Quantity: ${donation.Quantity}</span>,
+                                 <span class="text-gray-700">Bank: ${donation.BloodBankName}</span>
+                                <span class="text-sm text-gray-500">Date: ${donation.DonationDate}</span>
+                            </li>
+                        `).join('');
+                    } else {
+                        recentDonationsCountElement.textContent = 'No recent donations';
+                        recentDonationsListElement.innerHTML = '<li class="py-2 text-gray-500">No donations found.</li>';
+                    }
+                };
+
+                // --- Initial fetch of data ---
+                fetchRecentData(hospitalId);
+            }
+        });
+    </script>
+</body>
+</html>

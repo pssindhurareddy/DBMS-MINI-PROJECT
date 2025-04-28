@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Bank Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <main class="container mx-auto py-8">
+        <section id="login" class="bg-white rounded-lg shadow-md p-8">
+            <h2 class="text-2xl font-semibold text-red-600 mb-6">Login</h2>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="login_email" class="block text-gray-700 text-sm font-bold mb-2">Email:</label>
+                    <input type="email" id="login_email" name="login_email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <div id="login-email-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                </div>
+                <div>
+                    <label for="login_password" class="block text-gray-700 text-sm font-bold mb-2">Password:</label>
+                    <input type="password" id="login_password" name="login_password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <div id="login-password-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                </div>
+                <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Login</button>
+                    <div id="login-error-message" class="text-red-500 text-center mt-4" style="display: none;"></div>
+            </form>
+            <p class="text-center text-gray-600 text-sm mt-4">Don't have an account? <a href="/signup.html" class="text-blue-500 hover:underline">Sign Up</a></p>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-4 text-center rounded-md">
+        <p>© 2025 Blood Bank Management System. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('login-form');
+
+            // --- Helper Functions ---
+
+            /**
+             * Displays a message to the user.
+             * @param {string} message - The message to display.
+             * @param {string} type - 'error' or 'success'.
+             * @param {string} elementId - The ID of the element where the message should be displayed.
+             */
+            function displayMessage(message, type = 'error', elementId) {
+                const messageElement = document.getElementById(elementId);
+                if (!messageElement) return;
+
+                messageElement.textContent = message;
+                messageElement.style.display = 'block';
+                messageElement.className = `text-${type === 'error' ? 'red' : 'green'}-500 text-center mt-4`;
+            }
+
+            /**
+             * Validates the login form.
+             * @returns {boolean} - True if the form is valid, false otherwise.
+             */
+            function validateLoginForm() {
+                let isValid = true;
+                const email = document.getElementById('login_email').value.trim();
+                const password = document.getElementById('login_password').value.trim();
+
+                if (!email) {
+                    formErrorResponse('login-email-error', 'Email is required');
+                    isValid = false;
+                } else if (!isValidEmail(email)) {
+                    formErrorResponse('login-email-error', 'Invalid email format');
+                    isValid = false;
+                } else {
+                    document.getElementById('login-email-error').style.display = 'none';
+                }
+                if (!password) {
+                    formErrorResponse('login-password-error', 'Password is required');
+                    isValid = false;
+                } else {
+                    document.getElementById('login-password-error').style.display = 'none';
+                }
+                return isValid;
+            }
+
+            /**
+             * Checks if an email is valid.
+             * @param {string} email - The email address to check.
+             * @returns {boolean} - True if the email is valid, false otherwise.
+             */
+            function isValidEmail(email) {
+                // Basic email validation regex
+                const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+                return emailRegex.test(email);
+            }
+
+            /**
+             * Displays an error message for a form field.
+             * @param {string} fieldId - The ID of the form field.
+             * @param {string} message - The error message to display.
+             */
+            function formErrorResponse(fieldId, message) {
+                const errorElement = document.getElementById(fieldId);
+                if (errorElement) {
+                    errorElement.textContent = message;
+                    errorElement.style.display = 'block';
+                }
+            }
+
+            // --- Event Listeners ---
+
+            // Login Form Submission
+            loginForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                if (!validateLoginForm()) {
+                    return;
+                }
+
+                const email = document.getElementById('login_email').value;
+                const password = document.getElementById('login_password').value;
+
+                // Send the data to the server
+                fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(errData => {
+                            throw new Error(errData.error || 'Login failed');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    displayMessage('Login successful! Redirecting to dashboard...', 'success', 'login-error-message');
+                    setTimeout(() => {
+                        // Redirect to the dashboard page
+                        window.location.href = '/dashboard.html';
+                    }, 2000);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    displayMessage(error.message || 'An error occurred during login', 'error-message');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

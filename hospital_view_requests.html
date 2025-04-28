@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Blood Requests</title>
+    <style>
+        body { 
+            font-family: sans-serif; 
+            margin: 20px; 
+            color: #d9534f; /* Make default text red */
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px; 
+        }
+        th, td { 
+            border: 1px solid #ccc; 
+            padding: 8px; 
+            text-align: left;
+        }
+        th { 
+            background-color: #f2f2f2; 
+        }
+        a { 
+            text-decoration: none; 
+            color: #337ab7; 
+        }
+
+        /* Style for the Back to Dashboard button */
+        .dashboard-button {
+            display: block; /* Make it a block element to style it like a button */
+            margin: 20px auto; /* Center the button horizontally */
+            padding: 10px 15px;
+            background-color: #d9534f; /* Red background */
+            color: white; /* White text */
+            border: none; /* Remove the default border */
+            border-radius: 5px; /* Add rounded corners */
+            cursor: pointer; /* Add a pointer cursor on hover */
+            text-align: center; /* Center the text inside the button */
+            text-decoration: none; /* Remove underline from the link */
+            font-size: 16px;
+        }
+
+        .dashboard-button:hover {
+            background-color: #c9302c; /* Darker red on hover */
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Your Blood Requests</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Request ID</th>
+                <th>Blood Type</th>
+                <th>Quantity</th>
+                <th>Request Date</th>
+                <th>Status</th>
+                <th>Recipient Name</th>
+                <th>Recipient City</th>
+            </tr>
+        </thead>
+        <tbody id="request_table_body">
+        </tbody>
+    </table>
+    <a href="hospital_dashboard.html" class="dashboard-button">Back to Dashboard</a>
+
+    <script>
+        // public/js/view_requests.js
+
+document.addEventListener('DOMContentLoaded', function() {
+    const requestTableBody = document.getElementById('request_table_body');
+    const hospitalId = localStorage.getItem('hospitalId');
+
+    if (!hospitalId) {
+        window.location.href = './index.html'; // Redirect if not logged in
+        return;
+    }
+
+    fetch(`/api/hospitals/${hospitalId}/requests`)
+        .then(response => response.json())
+        .then(data => {
+            requestTableBody.innerHTML = '';
+            if (data && data.length > 0) {
+                data.forEach(request => {
+                    const row = requestTableBody.insertRow();
+                    row.insertCell().textContent = request.RequestID;
+                    row.insertCell().textContent = request.BloodType;
+                    row.insertCell().textContent = request.Quantity;
+                    row.insertCell().textContent = new Date(request.RequestDate).toLocaleDateString();
+                    row.insertCell().textContent = request.Status;
+                    row.insertCell().textContent = request.RecipientName;
+                    // Assuming you might want to fetch recipient city as well, 
+                    // you'd need to modify the backend query and the data structure.
+                    row.insertCell().textContent = 'N/A'; // Placeholder for Recipient City
+                });
+            } else {
+                const row = requestTableBody.insertRow();
+                const cell = row.insertCell();
+                cell.colSpan = 7;
+                cell.textContent = 'No blood requests found.';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching requests:', error);
+            alert('Failed to fetch blood requests.');
+        });
+});
+    </script>
+</body>
+</html>

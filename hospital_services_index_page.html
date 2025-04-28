@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Services</title>
+    <script src="https://cdn.tailwindcss.com/3.4.1"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-top: 60px; /* Adjust for fixed header */
+        }
+
+        .sticky-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 50;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: #e53e3e;
+        }
+
+        .logo-text span {
+            color: #374151;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #374151;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #e53e3e;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .login-button {
+            color: #e53e3e;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .login-button:hover {
+            color: #c82d2d;
+        }
+
+        .signup-button {
+            background-color: #e53e3e;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .signup-button:hover {
+            background-color: #c82d2d;
+        }
+
+        main {
+            padding-top: 80px; /* Adjust based on header height */
+            padding: 2rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .index-main {
+            margin-top: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hospital-services-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .hospital-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .hospital-link {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .hospital-link:hover {
+            transform: translateY(-0.25rem);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .hospital-link h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #e53e3e;
+            margin-bottom: 1rem;
+        }
+
+        .hospital-link a {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+            background-color: #e53e3e;
+            color: white;
+        }
+
+        .hospital-link a:hover {
+            background-color: #c82d2d;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-top: 2rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none; /* Hide on smaller screens */
+            }
+            .header-container {
+                padding: 1rem;
+            }
+            .auth-buttons {
+                gap: 0.5rem;
+            }
+            .signup-button {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+            .hospital-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="sticky-nav">
+        <div class="container header-container">
+            <a href="index.html" class="logo-text">BLOOD BANK <span>MANAGEMENT</span></a>
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="donate.html">Donate Blood</a>
+                <a href="request.html">Request Blood</a>
+                <a href="#hospitals">Hospital Services</a>
+            </nav>
+            <div class="auth-buttons">
+                <a href="hospital_login.html" class="login-button">Login</a>
+                <a href="hospital_register.html" class="signup-button">Sign Up</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container index-main">
+        <h1 class="hospital-services-title">Hospital Services</h1>
+        <div class="hospital-links">
+            <div class="hospital-link">
+                <h2>Hospital Registration</h2>
+                <a href="hospital_register.html">Register Now</a>
+            </div>
+            <div class="hospital-link">
+                <h2>Hospital Login</h2>
+                <a href="hospital_login.html">Login</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Blood Bank Management. All rights reserved.</p>
+    </footer>
+</body>
+</html>

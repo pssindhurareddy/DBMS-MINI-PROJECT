@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Inventory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-red-100 p-6">
+    <div class="container mx-auto">
+        <h1 class="text-3xl font-semibold text-red-700 text-center mb-8">Blood Inventory</h1>
+
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-red-600">Blood Inventory</h2>
+                <button id="add-blood-button" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Add Blood</button>
+            </div>
+            <table id="blood-inventory-table" class="min-w-full table-auto rounded-lg hidden">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="px-4 py-2 text-left text-gray-600 font-semibold uppercase">Blood Group</th>
+                        <th class="px-4 py-2 text-left text-gray-600 font-semibold uppercase">Quantity (Units)</th>
+                        <th class="px-4 py-2 text-left text-gray-600 font-semibold uppercase">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-700">
+                    <tr>
+                        <td colspan="3" class="px-4 py-2 text-center text-gray-500">No blood groups added yet.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p id="no-blood-groups" class="text-center text-gray-500">No blood groups added yet.</p>
+        </div>
+    </div>
+
+    <div id="add-blood-modal" class="modal fixed z-10 inset-0 overflow-y-auto bg-black bg-opacity-50 hidden">
+        <div class="modal-content bg-white m-auto p-8 rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-1/2">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-red-600">Add Blood Group</h2>
+                <span id="close-add-blood-modal" class="text-gray-500 hover:text-red-500 text-2xl font-bold cursor-pointer">&times;</span>
+            </div>
+            <form id="add-blood-form" class="space-y-4">
+                <div>
+                    <label for="blood-group" class="block text-gray-700 text-sm font-bold mb-2">Blood Group:</label>
+                    <select id="blood-group" name="blood-group" required class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="">Select Blood Group</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                    </select>
+                    <p id="blood-group-error" class="text-red-500 text-xs italic hidden">Please select a valid blood group.</p>
+                </div>
+                <div>
+                    <label for="quantity" class="block text-gray-700 text-sm font-bold mb-2">Quantity (Units):</label>
+                    <input type="number" id="quantity" name="quantity" min="1" required class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <p id="quantity-error" class="text-red-500 text-xs italic hidden">Please enter a valid quantity.</p>
+                </div>
+                <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Add Blood</button>
+            </form>
+        </div>
+    </div>
+
+<script>
+// public/js/blood_inventory.js
+
+document.addEventListener('DOMContentLoaded', function() {
+    const bloodInventoryTable = document.getElementById("blood-inventory-table");
+    const addBloodButton = document.getElementById("add-blood-button");
+    const addBloodModal = document.getElementById("add-blood-modal");
+    const closeAddBloodModal = document.getElementById("close-add-blood-modal");
+    const addBloodForm = document.getElementById("add-blood-form");
+    const noBloodGroupsMessage = document.getElementById("no-blood-groups");
+    const hospitalId = localStorage.getItem('hospitalId');
+
+    if (!hospitalId) {
+        window.location.href = './index.html'; // Redirect if not logged in
+        return;
+    }
+
+    let bloodInventory = {};
+
+    function fetchBloodInventory() {
+        fetch(`/api/hospitals/${hospitalId}/inventory`)
+            .then(response => response.json())
+            .then(data => {
+                bloodInventory = data.reduce((acc, item) => {
+                    acc[item.BloodType] = item.Quantity;
+                    return acc;
+                }, {});
+                updateBloodInventoryTable();
+            })
+            .catch(error => {
+                console.error('Error fetching blood inventory:', error);
+                alert('Failed to fetch blood inventory.');
+            });
+    }
+
+    function validateBloodGroup(bloodGroup) {
+        return /^(A\+|A-|B\+|B-|O\+|O-|AB\+|AB-)$/.test(bloodGroup);
+    }
+
+    function validateQuantity(quantity) {
+        return quantity > 0;
+    }
+
+    function updateBloodInventoryTable() {
+        const bloodInventoryTableBody = bloodInventoryTable.getElementsByTagName("tbody")[0];
+        bloodInventoryTableBody.innerHTML = "";
+
+        if (Object.keys(bloodInventory).length === 0) {
+            bloodInventoryTable.classList.add("hidden");
+            noBloodGroupsMessage.classList.remove("hidden");
+        } else {
+            bloodInventoryTable.classList.remove("hidden");
+            noBloodGroupsMessage.classList.add("hidden");
+            for (const bloodGroup in bloodInventory) {
+                const row = bloodInventoryTableBody.insertRow();
+                const bloodGroupCell = row.insertCell();
+                const quantityCell = row.insertCell();
+                const actionsCell = row.insertCell();
+
+                bloodGroupCell.textContent = bloodGroup;
+                quantityCell.textContent = bloodInventory[bloodGroup];
+
+                const donateButton = document.createElement("button");
+                donateButton.textContent = "Donate Blood";
+                donateButton.className = "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-xs";
+                donateButton.addEventListener("click", () => {
+                    // Placeholder for donation logic - this would typically involve
+                    // sending a request to the backend to record a donation.
+                    alert(`Simulating donation of 1 unit of ${bloodGroup}.`);
+                });
+                actionsCell.appendChild(donateButton);
+
+                const removeButton = document.createElement("button");
+                removeButton.textContent = "Remove";
+                removeButton.className = "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-xs ml-1";
+                removeButton.addEventListener("click", () => {
+                    // Placeholder for remove logic - this would typically involve
+                    // sending a request to the backend to adjust inventory.
+                    if (confirm(`Are you sure you want to remove all ${bloodGroup} stock?`)) {
+                        // Backend call to remove stock
+                        delete bloodInventory[bloodGroup];
+                        updateBloodInventoryTable();
+                    }
+                });
+                actionsCell.appendChild(removeButton);
+            }
+        }
+    }
+
+    addBloodButton.addEventListener("click", () => {
+        addBloodModal.classList.remove("hidden");
+    });
+
+    closeAddBloodModal.addEventListener("click", () => {
+        addBloodModal.classList.add("hidden");
+    });
+
+    addBloodForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const bloodGroup = document.getElementById("blood-group").value;
+        const quantity = parseInt(document.getElementById("quantity").value);
+        let hasErrors = false;
+
+        if (!validateBloodGroup(bloodGroup)) {
+            document.getElementById("blood-group-error").classList.remove("hidden");
+            hasErrors = true;
+        } else {
+            document.getElementById("blood-group-error").classList.add("hidden");
+        }
+
+        if (!validateQuantity(quantity)) {
+            document.getElementById("quantity-error").classList.remove("hidden");
+            hasErrors = true;
+        } else {
+            document.getElementById("quantity-error").classList.add("hidden");
+        }
+
+        if (!hasErrors) {
+            // Send request to backend to add/update blood inventory
+            fetch('/api/inventory', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    BankID: 1, // Assuming a single blood bank for now
+                    BloodType: bloodGroup,
+                    Quantity: quantity
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Inventory updated:', data);
+                fetchBloodInventory(); // Refresh inventory
+                addBloodModal.classList.add("hidden");
+                addBloodForm.reset();
+            })
+            .catch(error => {
+                console.error('Error adding blood:', error);
+                alert('Failed to add blood to inventory.');
+            });
+        }
+    });
+
+    fetchBloodInventory(); // Initial load of blood inventory
+});
+</script>
+</body>
+</html>

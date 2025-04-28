@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Bank Sign Up</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+
+    <main class="container mx-auto py-8">
+        <section id="signup" class="bg-white rounded-lg shadow-md p-8">
+            <h2 class="text-2xl font-semibold text-red-600 mb-6">Sign Up</h2>
+            <form id="signup-form" class="space-y-4">
+                <div>
+                    <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Name:</label>
+                    <input type="text" id="name" name="name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <div id="name-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                </div>
+                <div>
+                    <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email:</label>
+                    <input type="email" id="email" name="email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <div id="email-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                </div>
+                <div>
+                    <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password:</label>
+                    <input type="password" id="password" name="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <div id="password-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                </div>
+                <div>
+                    <label for="age" class="block text-gray-700 text-sm font-bold mb-2">Age:</label>
+                    <input type="number" id="age" name="age" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <div id="age-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                </div>
+                <div>
+                    <label for="gender" class="block text-gray-700 text-sm font-bold mb-2">Gender:</label>
+                    <select id="gender" name="gender" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <div id="gender-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                </div>
+                <div>
+                    <label for="blood_type" class="block text-gray-700 text-sm font-bold mb-2">Blood Type:</label>
+                    <select id="blood_type" name="blood_type" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        <option value="">Select Blood Type</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                    </select>
+                    <div id="blood_type-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                </div>
+                <div>
+                    <label for="city" class="block text-gray-700 text-sm font-bold mb-2">City:</label>
+                    <input type="text" id="city" name="city" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <div id="city-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                </div>
+                <div>
+                    <label for="contact_info" class="block text-gray-700 text-sm font-bold mb-2">Contact Info:</label>
+                    <input type="text" id="contact_info" name="contact_info" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <div id="contact_info-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                </div>
+                <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Sign Up</button>
+                <div id="error-message" class="text-red-500 text-center mt-4" style="display: none;"></div>
+                <div id="success-message" class="text-green-500 text-center mt-4" style="display: none;"></div>
+            </form>
+            <p class="text-center text-gray-600 text-sm mt-4">Already have an account? <a href="/login.html" class="text-blue-500 hover:underline">Login</a></p>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-4 text-center rounded-md">
+        <p>© 2025 Blood Bank Management System. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const signupForm = document.getElementById('signup-form');
+
+            // --- Helper Functions ---
+            /**
+             * Displays a message to the user.
+             * @param {string} message - The message to display.
+             * @param {string} type - 'error' or 'success'.
+             * @param {string} elementId - The ID of the element where the message should be displayed.
+             */
+            function displayMessage(message, type = 'error', elementId) {
+                const messageElement = document.getElementById(elementId);
+                if (!messageElement) return;
+
+                messageElement.textContent = message;
+                messageElement.style.display = 'block';
+                messageElement.className = `text-${type === 'error' ? 'red' : 'green'}-500 text-center mt-4`;
+            }
+
+            /**
+             * Validates the signup form.
+             * @returns {boolean} - True if the form is valid, false otherwise.
+             */
+            function validateSignupForm() {
+                let isValid = true;
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value.trim();
+                const age = document.getElementById('age').value.trim();
+                const gender = document.getElementById('gender').value;
+                const bloodType = document.getElementById('blood_type').value;
+                const city = document.getElementById('city').value.trim();
+                const contactInfo = document.getElementById('contact_info').value.trim();
+
+                if (!name) {
+                    formErrorResponse('name-error', 'Name is required');
+                    isValid = false;
+                } else {
+                    document.getElementById('name-error').style.display = 'none';
+                }
+                if (!email) {
+                    formErrorResponse('email-error', 'Email is required');
+                    isValid = false;
+                } else if (!isValidEmail(email)) {
+                    formErrorResponse('email-error', 'Invalid email format');
+                    isValid = false;
+                } else {
+                    document.getElementById('email-error').style.display = 'none';
+                }
+                if (!password) {
+                    formErrorResponse('password-error', 'Password is required');
+                    isValid = false;
+                } else if (password.length < 8) {
+                    formErrorResponse('password-error', 'Password must be at least 8 characters long');
+                    isValid = false;
+                } else {
+                    document.getElementById('password-error').style.display = 'none';
+                }
+                if (!age) {
+                    formErrorResponse('age-error', 'Age is required');
+                    isValid = false;
+                } else if (isNaN(age) || parseInt(age) <= 0) {
+                    formErrorResponse('age-error', 'Invalid age');
+                    isValid = false;
+                } else {
+                    document.getElementById('age-error').style.display = 'none';
+                }
+                if (!gender) {
+                    formErrorResponse('gender-error', 'Gender is required');
+                    isValid = false;
+                } else {
+                    document.getElementById('gender-error').style.display = 'none';
+                }
+                if (!bloodType) {
+                    formErrorResponse('blood_type-error', 'Blood Type is required');
+                    isValid = false;
+                } else {
+                    document.getElementById('blood_type-error').style.display = 'none';
+                }
+                if (!city) {
+                    formErrorResponse('city-error', 'City is required');
+                    isValid = false;
+                } else {
+                    document.getElementById('city-error').style.display = 'none';
+                }
+                if (!contactInfo) {
+                    formErrorResponse('contact_info-error', 'Contact Info is required');
+                    isValid = false;
+                } else {
+                    document.getElementById('contact_info-error').style.display = 'none';
+                }
+
+                return isValid;
+            }
+
+            /**
+             * Checks if an email is valid.
+             * @param {string} email - The email address to check.
+             * @returns {boolean} - True if the email is valid, false otherwise.
+             */
+            function isValidEmail(email) {
+                // Basic email validation regex
+                const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+                return emailRegex.test(email);
+            }
+
+            /**
+             * Displays an error message for a form field.
+             * @param {string} fieldId - The ID of the form field.
+             * @param {string} message - The error message to display.
+             */
+            function formErrorResponse(fieldId, message) {
+                const errorElement = document.getElementById(fieldId);
+                if (errorElement) {
+                    errorElement.textContent = message;
+                    errorElement.style.display = 'block';
+                }
+            }
+
+            // --- Event Listeners ---
+
+            // Signup Form Submission
+            signupForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                if (!validateSignupForm()) {
+                    return;
+                }
+
+                const newUser = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value,
+                    age: document.getElementById('age').value,
+                    gender: document.getElementById('gender').value,
+                    blood_type: document.getElementById('blood_type').value,
+                    city: document.getElementById('city').value,
+                    contact_info: document.getElementById('contact_info').value,
+                };
+
+                // Send the data to the server
+                fetch('/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(newUser),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(errData => {
+                            throw new Error(errData.error || 'Signup failed');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    displayMessage('Signup successful! Redirecting to login...', 'success', 'success-message');
+                    setTimeout(() => {
+                        window.location.href = '/login.html';
+                    }, 2000);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    displayMessage(error.message || 'An error occurred during signup', 'error', 'error-message');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

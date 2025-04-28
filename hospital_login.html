@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Login</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'#e53e3e',secondary:'#f6ad55'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+    <style>
+        /* ... (Your existing CSS) ... */
+    </style>
+</head>
+<body class="bg-gray-50">
+    <header class="sticky-nav fixed top-0 w-full z-50 bg-transparent transition-all duration-300">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-['Poppins'] font-bold tracking-wider text-primary">BLOOD BANK <span class="text-gray-800">MANAGEMENT</span></a>
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="#" class="nav-link text-gray-800 font-medium">Home</a>
+                <a href="#donate" class="nav-link text-gray-800 font-medium">Donate Blood</a>
+                <a href="#request" class="nav-link text-gray-800 font-medium">Request Blood</a>
+                <a href="#hospitals" class="nav-link text-gray-800 font-medium">Hospital Services</a>
+            </nav>
+            <div class="flex items-center space-x-4">
+                <a href="#login" class="text-primary font-medium">Login</a>
+                <a href="#signup" class="bg-primary text-white px-4 py-2 !rounded-button font-medium hover:bg-opacity-90 transition-all whitespace-nowrap">Sign Up</a>
+                <button class="md:hidden w-10 h-10 flex items-center justify-center text-gray-800">
+                    <i class="ri-menu-line ri-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-16 flex justify-center items-center">
+        <div class="bg-white rounded-lg shadow-md p-8 w-full max-w-md">
+            <h1 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Hospital Login</h1>
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username/Email:</label>
+                    <input type="text" id="username" name="username" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <div>
+                    <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password:</label>
+                    <input type="password" id="password" name="password" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <p id="login_error" class="text-red-500 text-xs italic"></p>
+                <button type="submit" class="bg-primary hover:bg-opacity-90 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full">Login</button>
+            </form>
+            <p class="text-center mt-4 text-gray-600">Don't have an account? <a href="hospital_register.html" class="text-primary font-medium hover:underline">Register here</a></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const loginError = document.getElementById('login_error');
+
+            loginForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+
+                fetch('http://localhost:3000/login', { 
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(errData => {
+                            console.error('Login failed on server:', errData);
+                            throw new Error(errData.message || `Login failed with status: ${response.status}`);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Login response:', data);
+                    if (data.message === 'Login successful') {
+                        localStorage.setItem('hospitalInfo', JSON.stringify(data.hospital));
+                        window.location.href = './hospital_dashboard.html';
+                    } else {
+                        loginError.textContent = data.message || 'Login failed. Please try again.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error during login:', error);
+                    loginError.textContent = error.message || 'An error occurred during login.';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Bank Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <main class="container mx-auto py-8">
+        <section id="dashboard" class="bg-white rounded-lg shadow-md p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold text-red-600">Welcome to Your Dashboard</h2>
+                <button id="logout-button" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Logout</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Your Profile</h3>
+                    <div id="profile-info" class="bg-gray-50 rounded-md p-4 space-y-2">
+                        <p><span class="font-semibold text-gray-700">Name:</span> <span id="dashboard-name" class="text-gray-900"></span></p>
+                        <p><span class="font-semibold text-gray-700">Email:</span> <span id="dashboard-email" class="text-gray-900"></span></p>
+                        <p><span class="font-semibold text-gray-700">Age:</span> <span id="dashboard-age" class="text-gray-900"></span></p>
+                        <p><span class="font-semibold text-gray-700">Gender:</span> <span id="dashboard-gender" class="text-gray-900"></span></p>
+                        <p><span class="font-semibold text-gray-700">Blood Type:</span> <span id="dashboard-blood_type" class="text-gray-900"></span></p>
+                        <p><span class="font-semibold text-gray-700">City:</span> <span id="dashboard-city" class="text-gray-900"></span></p>
+                        <p><span class="font-semibold text-gray-700">Contact Info:</span> <span id="dashboard-contact_info" class="text-gray-900"></span></p>
+                    </div>
+                </div>
+                <div id="donor-info-section" style="display: none;">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Donor Information</h3>
+                    <div  class="bg-gray-50 rounded-md p-4 space-y-2">
+                        <p><span class="font-semibold text-gray-700">Donor ID:</span> <span id="donor-id" class="text-gray-900"></span></p>
+                        <p><span class="font-semibold text-gray-700">Last Donation Date:</span> <span id="last-donation-date" class="text-gray-900"></span></p>
+                        <p><span class="font-semibold text-gray-700">Eligibility Status:</span> <span id="eligibility-status" class="text-gray-900"></span></p>
+                    </div>
+                </div>
+                <div id="recipient-info-section" style="display: none;">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Recipient Information</h3>
+                    <div class="bg-gray-50 rounded-md p-4 space-y-2">
+                        <p><span class="font-semibold text-gray-700">Recipient ID:</span> <span id="recipient-id" class="text-gray-900"></span></p>
+                        <p><span class="font-semibold text-gray-700">Request Status:</span> <span id="request-status" class="text-gray-900"></span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-4 text-center rounded-md">
+        <p>© 2025 Blood Bank Management System. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dashboard = document.getElementById('dashboard');
+            const logoutButton = document.getElementById('logout-button');
+            const profileInfoDiv = document.getElementById('profile-info');
+            const donorInfoSection = document.getElementById('donor-info-section');
+            const recipientInfoSection = document.getElementById('recipient-info-section');
+
+
+            // --- Helper Functions ---
+
+            /**
+             * Updates the user dashboard with the user's information.
+             * @param {object} user - The user object containing the user's data.
+             */
+            function updateDashboard(user) {
+                document.getElementById('dashboard-name').textContent = user.Name;
+                document.getElementById('dashboard-email').textContent = user.Email;
+                document.getElementById('dashboard-age').textContent = user.Age;
+                document.getElementById('dashboard-gender').textContent = user.Gender;
+                document.getElementById('dashboard-blood_type').textContent = user.BloodType;
+                document.getElementById('dashboard-city').textContent = user.City;
+                document.getElementById('dashboard-contact_info').textContent = user.ContactInfo;
+            }
+
+            /**
+             * Updates the donor information section.
+             * @param {object} donorInfo - The donor information object.
+             */
+            function updateDonorInfo(donorInfo) {
+                donorInfoSection.style.display = 'block';
+                document.getElementById('donor-id').textContent = donorInfo.DonorID;
+                document.getElementById('last-donation-date').textContent = donorInfo.LastDonationDate || 'N/A'; // Handle null
+                document.getElementById('eligibility-status').textContent = donorInfo.EligibilityStatus ? 'Eligible' : 'Ineligible';
+            }
+
+            /**
+             * Updates the recipient information section.
+             * @param {object} recipientInfo - The recipient information object.
+             */
+            function updateRecipientInfo(recipientInfo) {
+                recipientInfoSection.style.display = 'block';
+                document.getElementById('recipient-id').textContent = recipientInfo.RecipientID;
+                document.getElementById('request-status').textContent = recipientInfo.RequestStatus;
+            }
+
+            // --- Event Listeners ---
+
+            // Logout Button
+            logoutButton.addEventListener('click', () => {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('user');
+                // Redirect to the login page
+                window.location.href = '/login.html';
+            });
+
+            // --- Initial Setup ---
+            // Check if user is logged in
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                const storedUser = localStorage.getItem('user');
+                if (storedUser) {
+                    const user = JSON.parse(storedUser);
+                    updateDashboard(user);
+
+                    // Fetch additional user data (donor/recipient) from the server
+                    fetch('/dashboard', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log("Dashboard data:", data);
+                        if (data.donorInfo) {
+                            updateDonorInfo(data.donorInfo);
+                        } else if (data.recipientInfo) {
+                            updateRecipientInfo(data.recipientInfo);
+                        }
+                         //else {
+                        //     //  Neither donor nor recipient
+                        //     donorInfoSection.style.display = 'none';
+                        //     recipientInfoSection.style.display = 'none';
+                        // }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching dashboard data:', error);
+                        alert('Failed to fetch dashboard data. Please try again later.');
+                        //  redirect to login
+                        window.location.href = '/login.html';
+                    });
+
+                } else {
+                    // Redirect to login if user data is not found
+                    window.location.href = '/login.html';
+                }
+            } else {
+                // Redirect to login if user is not logged in
+                window.location.href = '/login.html';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Registration</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#e53e3e',
+                        secondary: '#f6ad55'
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+    <style>
+        :where([class^="ri-"])::before {
+            content: "\f3c2";
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .hero-section {
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.95) 40%, rgba(255, 255, 255, 0.8) 60%, rgba(255, 255, 255, 0.6) 80%, rgba(255, 255, 255, 0.2) 100%), url('https://readdy.ai/api/search-image?query=Abstract%20modern%20medical%20background%20with%20DNA%20structure%2C%20blood%20cells%2C%20and%20flowing%20red%20particles.%20Clean%20minimalist%20design%20with%20subtle%20medical%20symbols.%20Professional%20healthcare%20visualization%20with%20dynamic%20elements.%20High-tech%20medical%20concept%20with%20elegant%20red%20and%20white%20color%20scheme.%20Soft%20focus%20background%20with%20depth%20of%20field.&width=1920&height=1080&seq=2&orientation=landscape');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #e53e3e;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .counter-value {
+            transition: all 0.5s ease;
+        }
+
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #e53e3e;
+            box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.2);
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .blood-group-option {
+            transition: all 0.3s ease;
+        }
+
+        .blood-group-option.selected {
+            background-color: rgba(229, 62, 62, 0.1);
+            border-color: #e53e3e;
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .sticky-nav {
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .custom-checkbox {
+            position: relative;
+            padding-left: 30px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .custom-checkbox input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 20px;
+            width: 20px;
+            background-color: #fff;
+            border: 2px solid #e2e8f0;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .custom-checkbox:hover input ~ .checkmark {
+            border-color: #e53e3e;
+        }
+
+        .custom-checkbox input:checked ~ .checkmark {
+            background-color: #e53e3e;
+            border-color: #e53e3e;
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        .custom-checkbox input:checked ~ .checkmark:after {
+            display: block;
+        }
+
+        .custom-checkbox .checkmark:after {
+            left: 6px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .custom-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .custom-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .switch-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #e2e8f0;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .switch-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .switch-slider {
+            background-color: #e53e3e;
+        }
+
+        input:checked + .switch-slider:before {
+            transform: translateX(26px);
+        }
+
+        .progress-bar {
+            height: 4px;
+            background-color: #e2e8f0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: #e53e3e;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+<header class="sticky-nav fixed top-0 w-full z-50 bg-transparent transition-all duration-300">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+        <a href="#" class="text-2xl font-['Poppins'] font-bold tracking-wider text-primary">BLOOD BANK <span
+                class="text-gray-800">MANAGEMENT</span></a>
+        <nav class="hidden md:flex items-center space-x-8">
+            <a href="#" class="nav-link text-gray-800 font-medium">Home</a>
+            <a href="#donate" class="nav-link text-gray-800 font-medium">Donate Blood</a>
+            <a href="#request" class="nav-link text-gray-800 font-medium">Request Blood</a>
+            <a href="#hospitals" class="nav-link text-gray-800 font-medium">Hospital Services</a>
+        </nav>
+        <div class="flex items-center space-x-4">
+            <a href="#login" class="text-primary font-medium">Login</a>
+            <a href="#signup"
+               class="bg-primary text-white px-4 py-2 !rounded-button font-medium hover:bg-opacity-90 transition-all whitespace-nowrap">Sign
+                Up</a>
+            <button class="md:hidden w-10 h-10 flex items-center justify-center text-gray-800">
+                <i class="ri-menu-line ri-lg"></i>
+            </button>
+        </div>
+    </div>
+</header>
+<div class="container mx-auto px-4 py-16 flex justify-center items-center">
+    <form id="registrationForm" class="bg-white rounded-lg shadow-md p-8 w-full max-w-md space-y-6">
+        <h1 class="text-2xl font-semibold text-gray-800 text-center">Hospital Registration</h1>
+        <div>
+            <label for="hospital_name" class="block text-gray-700 text-sm font-bold mb-2">Hospital Name:</label>
+            <input type="text" id="hospital_name" name="hospital_name" required
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+        <div>
+            <label for="city" class="block text-gray-700 text-sm font-bold mb-2">City:</label>
+            <input type="text" id="city" name="city" required
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+        <div>
+            <label for="contact_info" class="block text-gray-700 text-sm font-bold mb-2">Contact Information:</label>
+            <input type="text" id="contact_info" name="contact_info" required
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+        <div>
+            <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password:</label>
+            <input type="password" id="password" name="password" required
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+        <div>
+            <label for="confirm_password" class="block text-gray-700 text-sm font-bold mb-2">Confirm Password:</label>
+            <input type="password" id="confirm_password" name="confirm_password" required
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            <p id="password_error" class="text-red-500 text-xs italic"></p>
+        </div>
+        <button type="submit"
+                class="bg-primary hover:bg-opacity-90 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full">
+            Register
+        </button>
+        <p class="text-center mt-4 text-gray-600">Already have an account? <a href="hospital_login.html"
+                                                                               class="text-primary font-medium hover:underline">Login
+            here</a></p>
+    </form>
+</div>
+<script>
+    document.getElementById('registrationForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const hospitalName = document.getElementById('hospital_name').value;
+        const city = document.getElementById('city').value;
+        const contactInfo = document.getElementById('contact_info').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm_password').value;
+        const passwordError = document.getElementById('password_error');
+
+        if (password !== confirmPassword) {
+            passwordError.textContent = "Passwords do not match.";
+            return;
+        } else {
+            passwordError.textContent = "";
+        }
+
+        const formData = {
+            Name: hospitalName,
+            City: city,
+            ContactInfo: contactInfo,
+            Password: password,
+            confirmPassword: confirmPassword, // Ensure this is included
+        };
+
+        fetch('/register_hospital', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                if (data.message === 'Hospital registered successfully!') {
+                    window.location.href = "hospital_login.html";
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred during registration.');
+            });
+    });
+</script>
+</body>
+</html>

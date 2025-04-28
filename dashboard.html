@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Admin Dashboard</h1>
+        <nav>
+            <a href="index.html">Home</a>
+        </nav>
+    </header>
+    <div class="container">
+        <h2>Manage Requests</h2>
+        <table id="requestsTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Recipient</th>
+                    <th>Blood Type</th>
+                    <th>Quantity</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows filled dynamically -->
+            </tbody>
+        </table>
+    </div>
+    <footer>
+        <p>&copy; 2025 Blood Donation System. All rights reserved.</p>
+    </footer>
+    <script src="admin.js"></script>
+</body>
+</html>
